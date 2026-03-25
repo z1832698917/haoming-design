@@ -196,11 +196,39 @@
   <footer>好明设计 &nbsp;·&nbsp; 影像 · 视觉 · 创意</footer>
 
   <script>
+    // ─── GITHUB CONFIG (public repo, manifest.json is public) ───
+    var GH_OWNER = 'z1832698917';
+    var GH_REPO  = 'haoming-design';
+    var GH_BRANCH = 'main';
+
     var works = [];
     var currentFilter = 'all';
     var dominantHue = 220, accentSat = 20, accentLig = 8;
     var $ = function(id){return document.getElementById(id);};
     var masonry = $('masonry');
+
+    // Auto-load manifest from GitHub on startup
+    async function loadFromGitHub() {
+      try {
+        var resp = await fetch('https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/manifest.json?ref='+GH_BRANCH, {
+          headers: { 'Accept': 'application/vnd.github+json' }
+        });
+        if (!resp.ok) return;
+        var data = await resp.json();
+        var json = atob(data.content);
+        var manifest = JSON.parse(json);
+        if (manifest && manifest.works && manifest.works.length) {
+          masonry.innerHTML = '';
+          works = [];
+          manifest.works.forEach(function(item) {
+            addWork(item.src, item.title || '作品', item.tags || ['photography']);
+          });
+          toast('已从云端加载 '+manifest.works.length+' 张作品', 'success');
+        }
+      } catch(e) {
+        // silent fail — user can still paste manually
+      }
+    }
 
     function extractColors(img) {
       try {
@@ -356,6 +384,9 @@
     function revealCards() {
       document.querySelectorAll('.card:not(.reveal)').forEach(function(c){revealObs.observe(c);});
     }
+
+    // Auto-load from GitHub on startup
+    loadFromGitHub();
   </script>
 </body>
 </html>
