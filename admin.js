@@ -2,7 +2,7 @@
 var IMGBB_API_KEY = '2c38d36238be760dde2abd6a3d8ebaee';
 var STORAGE_KEY = 'haoming_works';
 
-// GitHub auto-sync (using GitHub token from config — stored in localStorage)
+// GitHub auto-sync (using GitHub token from localStorage)
 var GH_TOKEN_KEY = 'haoming_gh_token';
 var GH_OWNER = 'z1832698917';
 var GH_REPO  = 'haoming-design';
@@ -320,14 +320,12 @@ function getGitHubToken() {
 }
 
 function setGitHubToken(token) {
+  if (!token || token.length < 20) {
+    toast('Token 格式不正确', 'error');
+    return;
+  }
   localStorage.setItem(GH_TOKEN_KEY, token);
-  // Verify token works
-  fetch('https://api.github.com/user', {
-    headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' }
-  }).then(function(r){ return r.json(); }).then(function(data) {
-    if (data.login) toast('GitHub 已连接：@'+data.login, 'success');
-    else toast('Token 验证失败，请检查', 'error');
-  }).catch(function(){ toast('Token 验证失败，请检查', 'error'); });
+  toast('✅ Token 已保存，现在上传会自动同步', 'success');
 }
 
 async function pushToGitHub() {
