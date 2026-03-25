@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>好明设计 · 管理后台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hue: 220; --sat: 20%; --lig: 8%;
+      --accent: hsl(var(--hue), 60%, 65%);
+      --text-primary: #e8e4df;
+      --text-secondary: rgba(232, 228, 223, 0.5);
+      --transition-speed: 1.2s;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: hsl(var(--hue), var(--sat), var(--lig));
+      color: var(--text-primary);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      transition: background var(--transition-speed) ease;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 0%, hsla(var(--hue), 50%, 40%, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, hsla(calc(var(--hue) + 30), 40%, 30%, 0.1) 0%, transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+    .admin-badge { position: relative; z-index: 10; display: inline-flex; align-items: center; gap: 0.4rem; margin: 1.5rem auto 0; padding: 0.35rem 1rem; border: 1px solid hsla(var(--hue), 50%, 50%, 0.3); border-radius: 2rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); background: hsla(var(--hue), 50%, 50%, 0.08); }
+    .admin-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    header { position: relative; z-index: 10; padding: 2rem 2rem 1.5rem; text-align: center; }
+    .header-inner { max-width: 800px; margin: 0 auto; }
+    .site-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+    .site-title em { font-style: italic; font-weight: 400; color: var(--accent); transition: color var(--transition-speed) ease; }
+    .site-subtitle { margin-top: 0.75rem; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-secondary); }
+    .color-bar { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.2rem; }
+    .color-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); transition: background 1.2s ease, box-shadow 1.2s ease; }
+    .color-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); }
+    .hue-bar { width: 120px; height: 4px; border-radius: 2px; background: linear-gradient(to right, hsl(0,70%,55%), hsl(30,70%,55%), hsl(60,70%,55%), hsl(90,70%,55%), hsl(120,70%,55%), hsl(150,70%,55%), hsl(180,70%,55%), hsl(210,70%,55%), hsl(240,70%,55%), hsl(270,70%,55%), hsl(300,70%,55%), hsl(330,70%,55%), hsl(360,70%,55%)); position: relative; margin: 0.5rem auto 0; }
+    .hue-cursor { position: absolute; top: -3px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid rgba(0,0,0,0.4); box-shadow: 0 2px 6px rgba(0,0,0,0.3); transform: translateX(-50%); transition: left 1.2s ease; }
+    .filter-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 1rem 2rem 1.5rem; flex-wrap: wrap; }
+    .filter-btn { background: transparent; border: 1px solid rgba(232,228,223,0.15); color: var(--text-secondary); padding: 0.4rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2rem; transition: all 0.3s ease; }
+    .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: hsla(var(--hue),50%,50%,0.1); }
+    .stats-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 2.5rem; padding: 0.5rem 2rem 1.5rem; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); transition: color var(--transition-speed) ease; }
+    .stat-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-top: 0.2rem; }
+    .stat-divider { width: 1px; height: 30px; background: rgba(232,228,223,0.15); }
+    .admin-panel { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 0 1.5rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .admin-panel { grid-template-columns: 1fr; } }
+    .panel-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(232,228,223,0.08); border-radius: 16px; padding: 1.25rem; }
+    .panel-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.75rem; }
+    .upload-box { border: 1.5px dashed rgba(232,228,223,0.2); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.4s ease; position: relative; }
+    .upload-box:hover, .upload-box.drag-over { border-color: var(--accent); background: hsla(var(--hue),50%,50%,0.05); }
+    .upload-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+    .upload-text { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+    .upload-hint { font-size: 0.6rem; color: rgba(232,228,223,0.3); margin-top: 0.4rem; }
+    .upload-progress { height: 2px; background: var(--accent); width: 0%; border-radius: 2px; margin-top: 0.6rem; transition: width 0.3s ease; }
+    .quick-add input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(232,228,223,0.12); border-radius: 8px; padding: 0.6rem 0.8rem; color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 0.75rem; outline: none; transition: border-color 0.3s; margin-bottom: 0.5rem; }
+    .quick-add input:focus { border-color: var(--accent); }
+    .quick-add input::placeholder { color: rgba(232,228,223,0.25); }
+    .tag-select { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+    .tag-option { padding: 0.25rem 0.7rem; border-radius: 2rem; border: 1px solid rgba(232,228,223,0.15); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; color: var(--text-secondary); }
+    .tag-option.selected { border-color: var(--accent); color: var(--accent); background: hsla(var(--hue),50%,50%,0.1); }
+    .quick-add .btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; }
+    .quick-add .btn:hover { opacity: 0.8; }
+    .quick-add .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .manifest-section { grid-column: 1/-1; }
+    .manifest-section textarea { width: 100%; height: 80px; background: rgba(0,0,0,0.2); border: 1px solid rgba(232,228,223,0.1); border-radius: 8px; color: var(--text-secondary); font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 0.6rem; resize: none; outline: none; margin-bottom: 0.5rem; }
+    .btn-row { display: flex; gap: 0.5rem; }
+    .btn-row button { flex: 1; padding: 0.55rem; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; border: 1px solid rgba(232,228,223,0.15); background: rgba(255,255,255,0.05); color: var(--text-secondary); }
+    .btn-row button:hover { opacity: 0.8; }
+    .btn-row .btn-primary { background: var(--accent); color: #000; border-color: transparent; }
+    .gallery-wrapper { position: relative; z-index: 10; max-width: 1600px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+    .masonry { columns: 4; column-gap: 1rem; }
+    @media (max-width: 1200px) { .masonry { columns: 3; } }
+    @media (max-width: 800px)  { .masonry { columns: 2; } }
+    @media (max-width: 480px)  { .masonry { columns: 1; } }
+    .card { break-inside: avoid; margin-bottom: 1rem; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; transform: translateY(0); transition: transform 0.5s cubic-bezier(0.23,1,0.32,1), box-shadow 0.5s ease; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .card img { width: 100%; display: block; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1); }
+    .card:hover img { transform: scale(1.04); }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%); opacity: 0; transition: opacity 0.4s ease; display: flex; align-items: flex-end; justify-content: space-between; padding: 1.25rem; }
+    .card:hover .card-overlay { opacity: 1; }
+    .card-info { transform: translateY(8px); transition: transform 0.4s ease; flex: 1; }
+    .card:hover .card-info { transform: translateY(0); }
+    .card-title { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 600; color: #fff; line-height: 1.3; }
+    .card-tag { display: inline-block; margin-top: 0.35rem; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: rgba(0,0,0,0.3); padding: 0.15rem 0.55rem; border-radius: 2rem; }
+    .card-actions { display: flex; flex-direction: column; gap: 0.35rem; align-items: center; }
+    .card-btn { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.7); transition: all 0.3s ease; }
+    .card:hover .card-btn { opacity: 1; transform: scale(1); }
+    .card-btn:hover { background: rgba(220,60,60,0.85); transform: scale(1.1) !important; }
+    .card-btn.copy-btn:hover { background: rgba(60,180,100,0.85); }
+    .lightbox { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+    .lightbox.open { opacity: 1; pointer-events: all; }
+    .lightbox-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 30px 100px rgba(0,0,0,0.6); transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.23,1,0.32,1); }
+    .lightbox.open .lightbox-img { transform: scale(1); }
+    .lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 44px; height: 44px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.3s, transform 0.3s; }
+    .lightbox-close:hover { background: rgba(255,255,255,0.2); transform: rotate(90deg); }
+    .lightbox-meta { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
+    .lightbox-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #fff; }
+    .lightbox-tags { margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
+    .lightbox-tag { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 0.2rem 0.7rem; border-radius: 2rem; }
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px); background: rgba(20,18,15,0.95); border: 1px solid rgba(232,228,223,0.15); color: var(--text-primary); padding: 0.75rem 1.5rem; border-radius: 3rem; font-size: 0.75rem; letter-spacing: 0.08em; z-index: 2000; transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), opacity 0.4s ease; opacity: 0; pointer-events: none; white-space: nowrap; backdrop-filter: blur(10px); }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .toast.success { border-color: hsla(140,60%,50%,0.4); }
+    .toast.error { border-color: hsla(0,70%,55%,0.4); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    header, .filter-bar, .stats-bar, .admin-panel { animation: fadeUp 0.8s ease both; }
+    .filter-bar { animation-delay: 0.05s; }
+    .stats-bar { animation-delay: 0.1s; }
+    .admin-panel { animation-delay: 0.15s; }
+    .card { animation: fadeUp 0.6s ease both; }
+    .card.reveal { animation: fadeUp 0.6s cubic-bezier(0.23,1,0.32,1) both; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(232,228,223,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(232,228,223,0.3); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="admin-badge"><span class="dot"></span>管理后台 · 内网专用</div>
+      <h1 class="site-title">好明<em>设计</em></h1>
+      <p class="site-subtitle">影像作品 &nbsp;/&nbsp; 跨境电商视觉 &nbsp;/&nbsp; A+ 内容</p>
+      <div class="color-bar">
+        <div class="color-dot" id="colorDot"></div>
+        <span class="color-label">主色调</span>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div class="hue-bar"><div class="hue-cursor" id="hueCursor" style="left:50%"></div></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="filter-bar" id="filterBar">
+    <button class="filter-btn active" data-filter="all">全部作品</button>
+    <button class="filter-btn" data-filter="photography">影像</button>
+    <button class="filter-btn" data-filter="main-image">主图</button>
+    <button class="filter-btn" data-filter="sub-image">副图</button>
+    <button class="filter-btn" data-filter="aplus">A+ Content</button>
+  </nav>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">作品总数</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num" id="statFiltered">0</div><div class="stat-label">当前显示</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num" id="statImgbb">—</div><div class="stat-label">已上传云端</div></div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="panel-card">
+      <div class="panel-title">↑ 上传新作品</div>
+      <div class="upload-box" id="uploadBox">
+        <input type="file" id="fileInput" multiple accept="image/*">
+        <div class="upload-icon">↑</div>
+        <div class="upload-text">拖拽或点击上传图片</div>
+        <div class="upload-hint">JPG · PNG · WEBP · 自动识别分类</div>
+        <div class="upload-progress" id="uploadProgress"></div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-title">+ 添加已有链接</div>
+      <div class="quick-add">
+        <input type="text" id="manualUrl" placeholder="粘贴 ImgBB 图片链接…">
+        <input type="text" id="manualTitle" placeholder="作品标题（选填）">
+        <div class="tag-select" id="tagSelect">
+          <span class="tag-option selected" data-tag="photography">影像</span>
+          <span class="tag-option" data-tag="main-image">主图</span>
+          <span class="tag-option" data-tag="sub-image">副图</span>
+          <span class="tag-option" data-tag="aplus">A+ Content</span>
+        </div>
+        <button class="btn" id="addManualBtn" disabled>添加到作品集</button>
+      </div>
+    </div>
+
+    <!-- GitHub Sync -->
+    <div class="panel-card" style="grid-column:1/-1;">
+      <div class="panel-title">☁️ 云端同步设置</div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <input type="password" id="ghTokenInput" placeholder="粘贴 GitHub Token（用于自动同步）" style="flex:1;min-width:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(232,228,223,0.12);border-radius:8px;padding:0.6rem 0.8rem;color:var(--text-primary);font-family:'DM Mono',monospace;font-size:0.72rem;outline:none;" oninput="document.getElementById('saveTokenBtn').disabled=!this.value.trim();">
+        <button class="btn" id="saveTokenBtn" disabled onclick="var t=document.getElementById('ghTokenInput').value.trim();if(t){setGitHubToken(t);document.getElementById('ghTokenInput').value='';}" style="background:var(--accent);color:#000;border:none;flex-shrink:0;">保存 Token</button>
+        <button class="btn" onclick="pullFromGitHub()" style="flex-shrink:0;">📥 从云端拉取</button>
+      </div>
+      <div style="margin-top:0.5rem;font-size:0.6rem;color:var(--text-secondary);opacity:0.6;">Token 仅本地保存，不会发送到任何第三方服务器</div>
+    </div>
+
+    <div class="panel-card manifest-section">
+      <div class="panel-title">📋 作品清单（自动同步到外网）</div>
+      <textarea id="manifestOutput" readonly placeholder="上传作品后，清单会自动同步到云端…"></textarea>
+      <div class="btn-row">
+        <button onclick="copyManifest()">📋 复制清单</button>
+        <button onclick="downloadManifest()">💾 下载 manifest.json</button>
+        <button class="btn-primary" onclick="document.getElementById('manifestInput').click()">📂 导入清单</button>
+      </div>
+      <input type="file" id="manifestInput" accept=".json" style="display:none" onchange="doImportManifest(this)">
+    </div>
+  </div>
+
+  <main class="gallery-wrapper">
+    <div class="masonry" id="masonry"></div>
+  </main>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+    <div class="lightbox-meta">
+      <div class="lightbox-title" id="lightboxTitle"></div>
+      <div class="lightbox-tags" id="lightboxTags"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
