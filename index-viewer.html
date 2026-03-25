@@ -151,13 +151,7 @@
     </div>
   </header>
 
-  <!-- UPDATE SECTION -->
-  <div class="update-banner">
-    <div class="update-box">
-      <textarea id="manifestInput" placeholder="从内网版复制作品清单 JSON，粘贴在此后点击「更新展示」…"></textarea>
-      <button onclick="applyManifest()">更新展示</button>
-    </div>
-  </div>
+  <!-- UPDATE SECTION - REMOVED, auto-sync from GitHub now -->
 
   <nav class="filter-bar" id="filterBar">
     <button class="filter-btn active" data-filter="all">全部作品</button>
@@ -347,24 +341,6 @@
       $('statTotal').textContent = works.length;
       $('statFiltered').textContent = works.length;
       $('emptyState').style.display = works.length?'none':'block';
-    }
-
-    function applyManifest() {
-      var text = $('manifestInput').value.trim();
-      if(!text) return;
-      try {
-        var data = JSON.parse(text);
-        if(!data.works) throw new Error('格式错误');
-        masonry.innerHTML = '';
-        works = [];
-        data.works.forEach(function(item){
-          addWork(item.src, item.title||'作品', item.tags||['photography']);
-        });
-        toast('✅ '+data.works.length+' 张作品已加载', 'success');
-        $('manifestInput').value = '';
-      } catch(e) {
-        toast('JSON 格式错误，请检查清单内容', 'error');
-      }
     }
 
     function toast(msg,type) {
