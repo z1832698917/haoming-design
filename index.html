@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>好明设计</title>
+  <title>好明设计 · 管理后台</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
@@ -35,7 +35,10 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events: none; z-index: 0; opacity: 0.4;
     }
-    header { position: relative; z-index: 10; padding: 3rem 2rem 2rem; text-align: center; }
+    .admin-badge { position: relative; z-index: 10; display: inline-flex; align-items: center; gap: 0.4rem; margin: 1.5rem auto 0; padding: 0.35rem 1rem; border: 1px solid hsla(var(--hue), 50%, 50%, 0.3); border-radius: 2rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); background: hsla(var(--hue), 50%, 50%, 0.08); }
+    .admin-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    header { position: relative; z-index: 10; padding: 2rem 2rem 1.5rem; text-align: center; }
     .header-inner { max-width: 800px; margin: 0 auto; }
     .site-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
     .site-title em { font-style: italic; font-weight: 400; color: var(--accent); transition: color var(--transition-speed) ease; }
@@ -45,66 +48,60 @@
     .color-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); }
     .hue-bar { width: 120px; height: 4px; border-radius: 2px; background: linear-gradient(to right, hsl(0,70%,55%), hsl(30,70%,55%), hsl(60,70%,55%), hsl(90,70%,55%), hsl(120,70%,55%), hsl(150,70%,55%), hsl(180,70%,55%), hsl(210,70%,55%), hsl(240,70%,55%), hsl(270,70%,55%), hsl(300,70%,55%), hsl(330,70%,55%), hsl(360,70%,55%)); position: relative; margin: 0.5rem auto 0; }
     .hue-cursor { position: absolute; top: -3px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid rgba(0,0,0,0.4); box-shadow: 0 2px 6px rgba(0,0,0,0.3); transform: translateX(-50%); transition: left 1.2s ease; }
-
-    /* UPDATE BANNER */
-    .update-banner {
-      position: relative; z-index: 10;
-      max-width: 600px; margin: 0 auto 1rem;
-      padding: 0 1.5rem;
-    }
-    .update-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(232,228,223,0.1);
-      border-radius: 12px; padding: 1rem 1.25rem;
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .update-box textarea {
-      flex: 1; background: rgba(0,0,0,0.2);
-      border: 1px solid rgba(232,228,223,0.12);
-      border-radius: 8px; color: var(--text-secondary);
-      font-family: 'DM Mono', monospace; font-size: 0.7rem;
-      padding: 0.5rem 0.75rem; resize: none;
-      height: 60px; outline: none;
-    }
-    .update-box button {
-      background: var(--accent); color: #000;
-      border: none; border-radius: 8px;
-      padding: 0.55rem 1rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem; letter-spacing: 0.08em;
-      text-transform: uppercase; cursor: pointer;
-      white-space: nowrap; transition: opacity 0.2s;
-      flex-shrink: 0;
-    }
-    .update-box button:hover { opacity: 0.8; }
-
-    .filter-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 0.5rem 2rem 1.5rem; flex-wrap: wrap; }
+    .filter-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 0.25rem; padding: 1rem 2rem 1.5rem; flex-wrap: wrap; }
     .filter-btn { background: transparent; border: 1px solid rgba(232,228,223,0.15); color: var(--text-secondary); padding: 0.4rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2rem; transition: all 0.3s ease; }
     .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: hsla(var(--hue),50%,50%,0.1); }
-
-    .stats-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 2.5rem; padding: 0 2rem 2rem; }
+    .stats-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 2.5rem; padding: 0.5rem 2rem 1.5rem; }
     .stat { text-align: center; }
     .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); transition: color var(--transition-speed) ease; }
     .stat-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-top: 0.2rem; }
     .stat-divider { width: 1px; height: 30px; background: rgba(232,228,223,0.15); }
-
+    .admin-panel { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 0 1.5rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .admin-panel { grid-template-columns: 1fr; } }
+    .panel-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(232,228,223,0.08); border-radius: 16px; padding: 1.25rem; }
+    .panel-title { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.75rem; }
+    .upload-box { border: 1.5px dashed rgba(232,228,223,0.2); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.4s ease; position: relative; }
+    .upload-box:hover, .upload-box.drag-over { border-color: var(--accent); background: hsla(var(--hue),50%,50%,0.05); }
+    .upload-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .upload-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+    .upload-text { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+    .upload-hint { font-size: 0.6rem; color: rgba(232,228,223,0.3); margin-top: 0.4rem; }
+    .upload-progress { height: 2px; background: var(--accent); width: 0%; border-radius: 2px; margin-top: 0.6rem; transition: width 0.3s ease; }
+    .quick-add input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(232,228,223,0.12); border-radius: 8px; padding: 0.6rem 0.8rem; color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 0.75rem; outline: none; transition: border-color 0.3s; margin-bottom: 0.5rem; }
+    .quick-add input:focus { border-color: var(--accent); }
+    .quick-add input::placeholder { color: rgba(232,228,223,0.25); }
+    .tag-select { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+    .tag-option { padding: 0.25rem 0.7rem; border-radius: 2rem; border: 1px solid rgba(232,228,223,0.15); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; color: var(--text-secondary); }
+    .tag-option.selected { border-color: var(--accent); color: var(--accent); background: hsla(var(--hue),50%,50%,0.1); }
+    .quick-add .btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 0.6rem; font-family: 'DM Mono', monospace; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; }
+    .quick-add .btn:hover { opacity: 0.8; }
+    .quick-add .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .manifest-section { grid-column: 1/-1; }
+    .manifest-section textarea { width: 100%; height: 80px; background: rgba(0,0,0,0.2); border: 1px solid rgba(232,228,223,0.1); border-radius: 8px; color: var(--text-secondary); font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 0.6rem; resize: none; outline: none; margin-bottom: 0.5rem; }
+    .btn-row { display: flex; gap: 0.5rem; }
+    .btn-row button { flex: 1; padding: 0.55rem; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; border: 1px solid rgba(232,228,223,0.15); background: rgba(255,255,255,0.05); color: var(--text-secondary); }
+    .btn-row button:hover { opacity: 0.8; }
+    .btn-row .btn-primary { background: var(--accent); color: #000; border-color: transparent; }
     .gallery-wrapper { position: relative; z-index: 10; max-width: 1600px; margin: 0 auto; padding: 0 1.5rem 4rem; }
     .masonry { columns: 4; column-gap: 1rem; }
     @media (max-width: 1200px) { .masonry { columns: 3; } }
     @media (max-width: 800px)  { .masonry { columns: 2; } }
     @media (max-width: 480px)  { .masonry { columns: 1; } }
-
     .card { break-inside: avoid; margin-bottom: 1rem; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; transform: translateY(0); transition: transform 0.5s cubic-bezier(0.23,1,0.32,1), box-shadow 0.5s ease; }
     .card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
     .card img { width: 100%; display: block; transition: transform 0.6s cubic-bezier(0.23,1,0.32,1); }
     .card:hover img { transform: scale(1.04); }
-    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%); opacity: 0; transition: opacity 0.4s ease; display: flex; align-items: flex-end; padding: 1.25rem; }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%); opacity: 0; transition: opacity 0.4s ease; display: flex; align-items: flex-end; justify-content: space-between; padding: 1.25rem; }
     .card:hover .card-overlay { opacity: 1; }
-    .card-info { transform: translateY(8px); transition: transform 0.4s ease; }
+    .card-info { transform: translateY(8px); transition: transform 0.4s ease; flex: 1; }
     .card:hover .card-info { transform: translateY(0); }
     .card-title { font-family: 'Playfair Display', serif; font-size: 0.9rem; font-weight: 600; color: #fff; line-height: 1.3; }
     .card-tag { display: inline-block; margin-top: 0.35rem; font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: rgba(0,0,0,0.3); padding: 0.15rem 0.55rem; border-radius: 2rem; }
-
+    .card-actions { display: flex; flex-direction: column; gap: 0.35rem; align-items: center; }
+    .card-btn { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transform: scale(0.7); transition: all 0.3s ease; }
+    .card:hover .card-btn { opacity: 1; transform: scale(1); }
+    .card-btn:hover { background: rgba(220,60,60,0.85); transform: scale(1.1) !important; }
+    .card-btn.copy-btn:hover { background: rgba(60,180,100,0.85); }
     .lightbox { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.92); backdrop-filter: blur(20px); opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
     .lightbox.open { opacity: 1; pointer-events: all; }
     .lightbox-img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 8px; box-shadow: 0 30px 100px rgba(0,0,0,0.6); transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.23,1,0.32,1); }
@@ -115,18 +112,15 @@
     .lightbox-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #fff; }
     .lightbox-tags { margin-top: 0.5rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; }
     .lightbox-tag { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); padding: 0.2rem 0.7rem; border-radius: 2rem; }
-
     .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px); background: rgba(20,18,15,0.95); border: 1px solid rgba(232,228,223,0.15); color: var(--text-primary); padding: 0.75rem 1.5rem; border-radius: 3rem; font-size: 0.75rem; letter-spacing: 0.08em; z-index: 2000; transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), opacity 0.4s ease; opacity: 0; pointer-events: none; white-space: nowrap; backdrop-filter: blur(10px); }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     .toast.success { border-color: hsla(140,60%,50%,0.4); }
     .toast.error { border-color: hsla(0,70%,55%,0.4); }
-
-    footer { position: relative; z-index: 10; text-align: center; padding: 2rem; font-size: 0.65rem; letter-spacing: 0.15em; color: var(--text-secondary); border-top: 1px solid rgba(232,228,223,0.06); }
-
     @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-    header, .filter-bar, .stats-bar, .update-banner { animation: fadeUp 0.8s ease both; }
+    header, .filter-bar, .stats-bar, .admin-panel { animation: fadeUp 0.8s ease both; }
     .filter-bar { animation-delay: 0.05s; }
     .stats-bar { animation-delay: 0.1s; }
+    .admin-panel { animation-delay: 0.15s; }
     .card { animation: fadeUp 0.6s ease both; }
     .card.reveal { animation: fadeUp 0.6s cubic-bezier(0.23,1,0.32,1) both; }
     ::-webkit-scrollbar { width: 6px; }
@@ -139,6 +133,7 @@
 
   <header>
     <div class="header-inner">
+      <div class="admin-badge"><span class="dot"></span>管理后台 · 内网专用</div>
       <h1 class="site-title">好明<em>设计</em></h1>
       <p class="site-subtitle">影像作品 &nbsp;/&nbsp; 跨境电商视觉 &nbsp;/&nbsp; A+ 内容</p>
       <div class="color-bar">
@@ -150,14 +145,6 @@
       </div>
     </div>
   </header>
-
-  <!-- UPDATE SECTION -->
-  <div class="update-banner">
-    <div class="update-box">
-      <textarea id="manifestInput" placeholder="从内网版复制作品清单 JSON，粘贴在此后点击「更新展示」…"></textarea>
-      <button onclick="applyManifest()">更新展示</button>
-    </div>
-  </div>
 
   <nav class="filter-bar" id="filterBar">
     <button class="filter-btn active" data-filter="all">全部作品</button>
@@ -171,15 +158,62 @@
     <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">作品总数</div></div>
     <div class="stat-divider"></div>
     <div class="stat"><div class="stat-num" id="statFiltered">0</div><div class="stat-label">当前显示</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><div class="stat-num" id="statImgbb">—</div><div class="stat-label">已上传云端</div></div>
+  </div>
+
+  <div class="admin-panel">
+    <div class="panel-card">
+      <div class="panel-title">↑ 上传新作品</div>
+      <div class="upload-box" id="uploadBox">
+        <input type="file" id="fileInput" multiple accept="image/*">
+        <div class="upload-icon">↑</div>
+        <div class="upload-text">拖拽或点击上传图片</div>
+        <div class="upload-hint">JPG · PNG · WEBP · 自动识别分类</div>
+        <div class="upload-progress" id="uploadProgress"></div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-title">+ 添加已有链接</div>
+      <div class="quick-add">
+        <input type="text" id="manualUrl" placeholder="粘贴 ImgBB 图片链接…">
+        <input type="text" id="manualTitle" placeholder="作品标题（选填）">
+        <div class="tag-select" id="tagSelect">
+          <span class="tag-option selected" data-tag="photography">影像</span>
+          <span class="tag-option" data-tag="main-image">主图</span>
+          <span class="tag-option" data-tag="sub-image">副图</span>
+          <span class="tag-option" data-tag="aplus">A+ Content</span>
+        </div>
+        <button class="btn" id="addManualBtn" disabled>添加到作品集</button>
+      </div>
+    </div>
+
+    <!-- GitHub Sync -->
+    <div class="panel-card" style="grid-column:1/-1;">
+      <div class="panel-title">☁️ 云端同步设置</div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+        <input type="password" id="ghTokenInput" placeholder="粘贴 GitHub Token（用于自动同步）" style="flex:1;min-width:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(232,228,223,0.12);border-radius:8px;padding:0.6rem 0.8rem;color:var(--text-primary);font-family:'DM Mono',monospace;font-size:0.72rem;outline:none;" oninput="document.getElementById('saveTokenBtn').disabled=!this.value.trim();">
+        <button class="btn" id="saveTokenBtn" disabled onclick="var t=document.getElementById('ghTokenInput').value.trim();if(t){setGitHubToken(t);document.getElementById('ghTokenInput').value='';}" style="background:var(--accent);color:#000;border:none;flex-shrink:0;">保存 Token</button>
+        <button class="btn" onclick="pullFromGitHub()" style="flex-shrink:0;">📥 从云端拉取</button>
+      </div>
+      <div style="margin-top:0.5rem;font-size:0.6rem;color:var(--text-secondary);opacity:0.6;">Token 仅本地保存，不会发送到任何第三方服务器</div>
+    </div>
+
+    <div class="panel-card manifest-section">
+      <div class="panel-title">📋 作品清单（自动同步到外网）</div>
+      <textarea id="manifestOutput" readonly placeholder="上传作品后，清单会自动同步到云端…"></textarea>
+      <div class="btn-row">
+        <button onclick="copyManifest()">📋 复制清单</button>
+        <button onclick="downloadManifest()">💾 下载 manifest.json</button>
+        <button class="btn-primary" onclick="document.getElementById('manifestInput').click()">📂 导入清单</button>
+      </div>
+      <input type="file" id="manifestInput" accept=".json" style="display:none" onchange="doImportManifest(this)">
+    </div>
   </div>
 
   <main class="gallery-wrapper">
     <div class="masonry" id="masonry"></div>
-    <div id="emptyState" style="text-align:center;padding:4rem 2rem;color:var(--text-secondary);display:none;">
-      <div style="font-size:3rem;margin-bottom:1rem;">🎨</div>
-      <div style="font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;">暂无作品</div>
-      <div style="font-size:0.65rem;margin-top:0.5rem;opacity:0.5;">从内网版复制清单后粘贴上方更新</div>
-    </div>
   </main>
 
   <div class="lightbox" id="lightbox">
@@ -193,169 +227,6 @@
 
   <div class="toast" id="toast"></div>
 
-  <footer>好明设计 &nbsp;·&nbsp; 影像 · 视觉 · 创意</footer>
-
-  <script>
-    var works = [];
-    var currentFilter = 'all';
-    var dominantHue = 220, accentSat = 20, accentLig = 8;
-    var $ = function(id){return document.getElementById(id);};
-    var masonry = $('masonry');
-
-    function extractColors(img) {
-      try {
-        var c = document.createElement('canvas');
-        var ctx = c.getContext('2d');
-        var size = 60;
-        c.width = c.height = size;
-        ctx.drawImage(img,0,0,size,size);
-        var d = ctx.getImageData(0,0,size,size).data;
-        var rS=0,gS=0,bS=0,cnt=0;
-        for (var i=0;i<d.length;i+=16){rS+=d[i];gS+=d[i+1];bS+=d[i+2];cnt++;}
-        if(!cnt) throw 0;
-        var hsl = rgbToHsl(Math.round(rS/cnt),Math.round(gS/cnt),Math.round(bS/cnt));
-        return{h:Math.round(hsl[0]),s:Math.round(hsl[1]*100),l:Math.round(hsl[2]*100)};
-      } catch(e){return{h:220,s:20,l:15};}
-    }
-
-    function rgbToHsl(r,g,b) {
-      r/=255;g/=255;b/=255;
-      var max=Math.max(r,g,b),min=Math.min(r,g,b);
-      var h,s,l=(max+min)/2;
-      if(max===min){h=s=0;}
-      else{
-        var d=max-min;
-        s=l>0.5?d/(2-max-min):d/(max+min);
-        switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}
-      }
-      return[h*360,s,l];
-    }
-
-    function applyTheme(colors) {
-      dominantHue = colors.h;
-      accentSat = Math.max(15,colors.s*0.6);
-      accentLig = Math.max(5,Math.min(20,colors.l*0.18));
-      document.documentElement.style.setProperty('--hue',colors.h);
-      document.documentElement.style.setProperty('--sat',accentSat+'%');
-      document.documentElement.style.setProperty('--lig',accentLig+'%');
-      var dot = $('colorDot');
-      dot.style.background = 'hsl('+colors.h+','+colors.s+'%,'+colors.l+'%)';
-      dot.style.boxShadow = '0 0 16px hsl('+colors.h+','+colors.s+'%,'+colors.l+'%)';
-      var cur = $('hueCursor');
-      if(cur) cur.style.left = (colors.h/360)*100+'%';
-    }
-
-    function blendTheme(colors,weight) {
-      weight = weight||0.3;
-      var b = {h:Math.round(dominantHue*(1-weight)+colors.h*weight),s:Math.round(accentSat*(1-weight)+Math.max(15,colors.s*0.6)*weight),l:Math.round(accentLig*(1-weight)+Math.max(5,Math.min(20,colors.l*0.18))*weight)};
-      applyTheme(b);
-    }
-
-    function recalcDominant() {
-      if(!works.length){applyTheme({h:220,s:20,l:8});return;}
-      var n=works.length;
-      applyTheme({h:works.reduce(function(s,w){return s+w.colors.h;},0)/n,s:works.reduce(function(s,w){return s+w.colors.s;},0)/n,l:works.reduce(function(s,w){return s+w.colors.l;},0)/n});
-    }
-
-    function addWork(src,title,tags) {
-      var img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = function() {
-        var colors = extractColors(img);
-        var id = Date.now()+Math.random();
-        var card = document.createElement('div');
-        card.className = 'card';
-        card.dataset.tags = tags.join(',');
-        card.style.animationDelay = (Math.random()*0.3)+'s';
-        card.innerHTML = '<img src="'+src+'" alt="'+title.replace(/"/g,'&quot;')+'" loading="lazy"><div class="card-overlay"><div class="card-info"><div class="card-title">'+title.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>'+tags.map(function(t){return'<span class="card-tag">'+t+'</span>';}).join('')+'</div></div>';
-        card.addEventListener('click',function(){openLightbox(src,title,tags);});
-        card.addEventListener('mouseenter',function(){blendTheme(colors,0.25);});
-        masonry.appendChild(card);
-        works.push({id:id,src:src,title:title,tags:tags,colors:colors,element:card});
-        recalcDominant();
-        updateStats();
-        revealCards();
-      };
-      img.onerror = function(){};
-      img.src = src;
-    }
-
-    function openLightbox(src,title,tags) {
-      $('lightboxImg').src = src;
-      $('lightboxTitle').textContent = title;
-      $('lightboxTags').innerHTML = tags.map(function(t){return'<span class="lightbox-tag">'+t+'</span>';}).join('');
-      $('lightbox').classList.add('open');
-      for(var i=0;i<works.length;i++){if(works[i].src===src){blendTheme(works[i].colors,0.5);break;}}
-    }
-
-    function closeLightbox() {
-      $('lightbox').classList.remove('open');
-      recalcDominant();
-    }
-
-    $('lightboxClose').addEventListener('click',closeLightbox);
-    $('lightbox').addEventListener('click',function(e){if(e.target===$('lightbox')) closeLightbox();});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape') closeLightbox();});
-
-    $('filterBar').addEventListener('click',function(e){
-      if(!e.target.classList.contains('filter-btn')) return;
-      currentFilter = e.target.dataset.filter;
-      document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
-      e.target.classList.add('active');
-      applyFilter();
-    });
-
-    function applyFilter() {
-      var visible=0;
-      works.forEach(function(w){
-        var show = currentFilter==='all' || w.tags.indexOf(currentFilter)!==-1;
-        w.element.style.display = show?'':'none';
-        if(show) visible++;
-      });
-      $('statFiltered').textContent = visible;
-    }
-
-    function updateStats() {
-      $('statTotal').textContent = works.length;
-      $('statFiltered').textContent = works.length;
-      $('emptyState').style.display = works.length?'none':'block';
-    }
-
-    function applyManifest() {
-      var text = $('manifestInput').value.trim();
-      if(!text) return;
-      try {
-        var data = JSON.parse(text);
-        if(!data.works) throw new Error('格式错误');
-        masonry.innerHTML = '';
-        works = [];
-        data.works.forEach(function(item){
-          addWork(item.src, item.title||'作品', item.tags||['photography']);
-        });
-        toast('✅ '+data.works.length+' 张作品已加载', 'success');
-        $('manifestInput').value = '';
-      } catch(e) {
-        toast('JSON 格式错误，请检查清单内容', 'error');
-      }
-    }
-
-    function toast(msg,type) {
-      var el = $('toast');
-      el.textContent = msg;
-      el.className = 'toast show'+(type?' '+type:'');
-      clearTimeout(el._timer);
-      el._timer = setTimeout(function(){el.classList.remove('show');},3000);
-    }
-
-    var revealObs = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting){entry.target.classList.add('reveal');revealObs.unobserve(entry.target);}
-      });
-    },{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
-
-    function revealCards() {
-      document.querySelectorAll('.card:not(.reveal)').forEach(function(c){revealObs.observe(c);});
-    }
-  </script>
+  <script src="admin.js"></script>
 </body>
 </html>
