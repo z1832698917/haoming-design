@@ -3,126 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>好明设计 · 管理后台</title>
+  <title>好明设计 · 管理</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --hue: 220; --sat: 20%; --lig: 8%;
-      --accent: hsl(var(--hue), 60%, 65%);
-      --text-primary: #e8e4df;
-      --text-secondary: rgba(232, 228, 223, 0.5);
-    }
+    :root { --hue: 220; --sat: 20%; --lig: 8%; --accent: hsl(var(--hue), 60%, 65%); --text-primary: #e8e4df; --text-secondary: rgba(232, 228, 223, 0.5); }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background-color: hsl(var(--hue), var(--sat), var(--lig));
-      color: var(--text-primary);
-      font-family: 'DM Mono', monospace;
-      min-height: 100vh;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background: radial-gradient(ellipse at 20% 0%, hsla(var(--hue), 50%, 40%, 0.15) 0%, transparent 60%);
-      pointer-events: none; z-index: 0;
-    }
+    body { background-color: hsl(var(--hue), var(--sat), var(--lig)); color: var(--text-primary); font-family: 'DM Mono', monospace; min-height: 100vh; }
+    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 20% 0%, hsla(var(--hue), 50%, 40%, 0.15) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+    
+    .auth-screen { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
+    .auth-screen.hidden { display: none; }
+    .auth-box { background: rgba(20,18,15,0.9); border: 1px solid rgba(232,228,223,0.15); border-radius: 16px; padding: 2rem; max-width: 320px; width: 90%; text-align: center; }
+    .auth-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
+    .auth-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(232,228,223,0.12); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 0.85rem; outline: none; margin-bottom: 1rem; transition: border-color 0.3s; }
+    .auth-input:focus { border-color: var(--accent); }
+    .auth-input::placeholder { color: rgba(232,228,223,0.25); }
+    .auth-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 0.75rem; font-family: 'DM Mono', monospace; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; font-weight: 600; }
+    .auth-btn:hover { opacity: 0.8; }
+    .auth-error { color: #ff6b6b; font-size: 0.75rem; margin-top: 0.5rem; display: none; }
+    .auth-error.show { display: block; }
 
     header { position: relative; z-index: 10; padding: 2rem 2rem 1.5rem; text-align: center; }
     .site-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; }
     .site-title em { font-style: italic; font-weight: 400; color: var(--accent); }
-    .admin-label { display: inline-block; margin-top: 0.5rem; padding: 0.3rem 0.8rem; border: 1px solid var(--accent); border-radius: 2rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
+    .admin-badge { display: inline-block; margin-top: 0.5rem; padding: 0.3rem 0.8rem; border: 1px solid var(--accent); border-radius: 2rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); }
 
     .container { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 0 1.5rem 2rem; }
     .section { background: rgba(255,255,255,0.03); border: 1px solid rgba(232,228,223,0.08); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; }
     .section-title { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 1rem; }
 
-    .upload-box {
-      border: 2px dashed rgba(232,228,223,0.2); border-radius: 12px;
-      padding: 3rem 1.5rem; text-align: center; cursor: pointer;
-      transition: all 0.3s ease; position: relative;
-    }
-    .upload-box:hover, .upload-box.drag-over {
-      border-color: var(--accent); background: hsla(var(--hue),50%,50%,0.05);
-    }
-    .upload-box input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer;
-    }
+    .upload-box { border: 2px dashed rgba(232,228,223,0.2); border-radius: 12px; padding: 3rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative; }
+    .upload-box:hover, .upload-box.drag-over { border-color: var(--accent); background: hsla(var(--hue),50%,50%,0.05); }
+    .upload-box input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
     .upload-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
     .upload-text { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 0.3rem; }
     .upload-hint { font-size: 0.65rem; color: rgba(232,228,223,0.3); }
     .upload-progress { height: 3px; background: var(--accent); width: 0%; border-radius: 2px; margin-top: 1rem; transition: width 0.3s ease; }
 
     .input-row { margin-bottom: 1rem; }
-    .input-row input {
-      width: 100%; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(232,228,223,0.12); border-radius: 8px;
-      padding: 0.75rem 1rem; color: var(--text-primary);
-      font-family: 'DM Mono', monospace; font-size: 0.8rem;
-      outline: none; transition: border-color 0.3s;
-    }
+    .input-row input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(232,228,223,0.12); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-primary); font-family: 'DM Mono', monospace; font-size: 0.8rem; outline: none; transition: border-color 0.3s; }
     .input-row input:focus { border-color: var(--accent); }
     .input-row input::placeholder { color: rgba(232,228,223,0.25); }
 
     .tag-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    .tag-btn {
-      padding: 0.4rem 0.9rem; border-radius: 2rem;
-      border: 1px solid rgba(232,228,223,0.15); font-size: 0.65rem;
-      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
-      transition: all 0.2s; color: var(--text-secondary); background: transparent;
-    }
-    .tag-btn.active {
-      border-color: var(--accent); color: var(--accent);
-      background: hsla(var(--hue),50%,50%,0.1);
-    }
+    .tag-btn { padding: 0.4rem 0.9rem; border-radius: 2rem; border: 1px solid rgba(232,228,223,0.15); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; color: var(--text-secondary); background: transparent; }
+    .tag-btn.active { border-color: var(--accent); color: var(--accent); background: hsla(var(--hue),50%,50%,0.1); }
 
     .btn-row { display: flex; gap: 0.5rem; }
-    .btn-row button {
-      flex: 1; padding: 0.75rem; border-radius: 8px;
-      font-family: 'DM Mono', monospace; font-size: 0.75rem;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      cursor: pointer; transition: opacity 0.2s;
-      border: 1px solid rgba(232,228,223,0.15); background: rgba(255,255,255,0.05);
-      color: var(--text-secondary);
-    }
+    .btn-row button { flex: 1; padding: 0.75rem; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: opacity 0.2s; border: 1px solid rgba(232,228,223,0.15); background: rgba(255,255,255,0.05); color: var(--text-secondary); }
     .btn-row button:hover { opacity: 0.8; }
-    .btn-row .btn-primary {
-      background: var(--accent); color: #000; border-color: transparent;
-    }
+    .btn-row .btn-primary { background: var(--accent); color: #000; border-color: transparent; }
     .btn-row button:disabled { opacity: 0.3; cursor: not-allowed; }
 
     .gallery { columns: 3; column-gap: 1rem; margin-top: 1.5rem; }
     @media (max-width: 1200px) { .gallery { columns: 2; } }
     @media (max-width: 600px) { .gallery { columns: 1; } }
-    .card {
-      break-inside: avoid; margin-bottom: 1rem; border-radius: 12px;
-      overflow: hidden; position: relative; cursor: pointer;
-      transform: translateY(0); transition: transform 0.3s, box-shadow 0.3s;
-    }
+    .card { break-inside: avoid; margin-bottom: 1rem; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; transform: translateY(0); transition: transform 0.3s, box-shadow 0.3s; }
     .card:hover { transform: translateY(-4px); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
     .card img { width: 100%; display: block; }
-    .card-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
-      display: flex; align-items: flex-end; justify-content: space-between;
-      padding: 1rem; opacity: 0; transition: opacity 0.3s;
-    }
+    .card-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%); display: flex; align-items: flex-end; justify-content: space-between; padding: 1rem; opacity: 0; transition: opacity 0.3s; }
     .card:hover .card-overlay { opacity: 1; }
     .card-title { font-family: 'Playfair Display', serif; font-size: 0.85rem; color: #fff; flex: 1; }
-    .card-delete {
-      background: rgba(220,60,60,0.8); border: none; color: #fff;
-      width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
-      font-size: 0.9rem; transition: background 0.2s;
-    }
+    .card-delete { background: rgba(220,60,60,0.8); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; }
     .card-delete:hover { background: rgba(220,60,60,1); }
 
-    .toast {
-      position: fixed; bottom: 2rem; left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: rgba(20,18,15,0.95); border: 1px solid rgba(232,228,223,0.15);
-      color: var(--text-primary); padding: 0.75rem 1.5rem;
-      border-radius: 3rem; font-size: 0.75rem; letter-spacing: 0.08em;
-      z-index: 2000; transition: transform 0.3s, opacity 0.3s;
-      opacity: 0; pointer-events: none; white-space: nowrap;
-    }
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(20,18,15,0.95); border: 1px solid rgba(232,228,223,0.15); color: var(--text-primary); padding: 0.75rem 1.5rem; border-radius: 3rem; font-size: 0.75rem; letter-spacing: 0.08em; z-index: 2000; transition: transform 0.3s, opacity 0.3s; opacity: 0; pointer-events: none; white-space: nowrap; }
     .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     footer { position: relative; z-index: 10; text-align: center; padding: 2rem; font-size: 0.65rem; color: var(--text-secondary); border-top: 1px solid rgba(232,228,223,0.06); }
@@ -130,13 +76,22 @@
 </head>
 <body>
 
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-box">
+      <div class="auth-title">好明设计</div>
+      <input type="text" class="auth-input" id="authUser" placeholder="账号" autocomplete="off">
+      <input type="password" class="auth-input" id="authPass" placeholder="密码" autocomplete="off">
+      <button class="auth-btn" onclick="doAuth()">进入管理</button>
+      <div class="auth-error" id="authError"></div>
+    </div>
+  </div>
+
   <header>
     <h1 class="site-title">好明<em>设计</em></h1>
-    <div class="admin-label">管理后台</div>
+    <div class="admin-badge">管理后台</div>
   </header>
 
   <div class="container">
-    <!-- UPLOAD SECTION -->
     <div class="section">
       <div class="section-title">📤 上传新作品</div>
       <div class="upload-box" id="uploadBox">
@@ -148,27 +103,19 @@
       </div>
     </div>
 
-    <!-- MANUAL ADD SECTION -->
     <div class="section">
       <div class="section-title">🔗 添加已有链接</div>
-      <div class="input-row">
-        <input type="text" id="manualUrl" placeholder="粘贴 ImgBB 图片链接…">
-      </div>
-      <div class="input-row">
-        <input type="text" id="manualTitle" placeholder="作品标题（选填）">
-      </div>
+      <div class="input-row"><input type="text" id="manualUrl" placeholder="粘贴 ImgBB 图片链接…"></div>
+      <div class="input-row"><input type="text" id="manualTitle" placeholder="作品标题（选填）"></div>
       <div class="tag-row" id="tagGroup">
         <button class="tag-btn active" data-tag="photography">影像</button>
         <button class="tag-btn" data-tag="main-image">主图</button>
         <button class="tag-btn" data-tag="sub-image">副图</button>
         <button class="tag-btn" data-tag="aplus">A+ Content</button>
       </div>
-      <div class="btn-row">
-        <button class="btn-primary" id="addManualBtn" disabled>添加到作品集</button>
-      </div>
+      <div class="btn-row"><button class="btn-primary" id="addManualBtn" disabled>添加到作品集</button></div>
     </div>
 
-    <!-- GALLERY SECTION -->
     <div class="section">
       <div class="section-title">📸 作品集</div>
       <div class="gallery" id="gallery"></div>
@@ -176,14 +123,15 @@
   </div>
 
   <div class="toast" id="toast"></div>
-
   <footer>好明设计 · 管理后台 · 仅限授权用户</footer>
 
   <script>
-    // CONFIG
-    const IMGBB_API_KEY = '2c38d36238be760dde2abd6a3d8ebaee';
-    const STORAGE_KEY = 'haoming_works';
-    const GH_TOKEN_KEY = 'haoming_gh_token';
+    const AUTH_USER = 'z1832698917';
+    const AUTH_PASS = '123A123a123B';
+    const AUTH_KEY = 'haoming_auth_v2';
+    const IMGBB_KEY = '2c38d36238be760dde2abd6a3d8ebaee';
+    const STORAGE_KEY = 'haoming_works_v2';
+    const GH_TOKEN_KEY = 'haoming_gh_token_v2';
     const GH_OWNER = 'z1832698917';
     const GH_REPO = 'haoming-design';
 
@@ -191,34 +139,39 @@
     let selectedTag = 'photography';
     let isUploading = false;
 
-    // INIT
-    function init() {
-      loadWorks();
-      setupEventListeners();
+    function doAuth() {
+      const user = document.getElementById('authUser').value.trim();
+      const pass = document.getElementById('authPass').value;
+      const error = document.getElementById('authError');
+
+      if (user === AUTH_USER && pass === AUTH_PASS) {
+        localStorage.setItem(AUTH_KEY, 'true');
+        document.getElementById('authScreen').classList.add('hidden');
+        init();
+      } else {
+        error.textContent = '账号或密码错误';
+        error.classList.add('show');
+      }
     }
 
-    function setupEventListeners() {
+    document.getElementById('authPass').addEventListener('keypress', e => {
+      if (e.key === 'Enter') doAuth();
+    });
+
+    function init() {
+      loadWorks();
+      setupUI();
+    }
+
+    function setupUI() {
       const uploadBox = document.getElementById('uploadBox');
       const fileInput = document.getElementById('fileInput');
 
-      uploadBox.addEventListener('dragover', e => {
-        e.preventDefault();
-        uploadBox.classList.add('drag-over');
-      });
-      uploadBox.addEventListener('dragleave', () => {
-        uploadBox.classList.remove('drag-over');
-      });
-      uploadBox.addEventListener('drop', e => {
-        e.preventDefault();
-        uploadBox.classList.remove('drag-over');
-        if (!isUploading) handleFiles(e.dataTransfer.files);
-      });
+      uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('drag-over'); });
+      uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('drag-over'));
+      uploadBox.addEventListener('drop', e => { e.preventDefault(); uploadBox.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+      fileInput.addEventListener('change', e => handleFiles(e.target.files));
 
-      fileInput.addEventListener('change', e => {
-        if (!isUploading) handleFiles(e.target.files);
-      });
-
-      // Tag selection
       document.querySelectorAll('.tag-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
@@ -227,7 +180,6 @@
         });
       });
 
-      // Manual add
       document.getElementById('manualUrl').addEventListener('input', () => {
         document.getElementById('addManualBtn').disabled = !document.getElementById('manualUrl').value.trim();
       });
@@ -244,14 +196,13 @@
       });
     }
 
-    // UPLOAD
     async function uploadToImgBB(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = async e => {
           const base64 = e.target.result.split(',')[1];
           const fd = new FormData();
-          fd.append('key', IMGBB_API_KEY);
+          fd.append('key', IMGBB_KEY);
           fd.append('image', base64);
           fd.append('name', file.name);
 
@@ -305,7 +256,6 @@
       setTimeout(() => toast(`✅ ${ok} 张作品已添加，自动同步到云端`, 'success'), 300);
     }
 
-    // WORK MANAGEMENT
     function addWork(src, title, tags) {
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -313,19 +263,8 @@
         const id = Date.now() + Math.random();
         const card = document.createElement('div');
         card.className = 'card';
-        card.innerHTML = `
-          <img src="${src}" alt="${title}">
-          <div class="card-overlay">
-            <div class="card-title">${title}</div>
-            <button class="card-delete" data-id="${id}">✕</button>
-          </div>
-        `;
-
-        card.querySelector('.card-delete').addEventListener('click', e => {
-          e.stopPropagation();
-          deleteWork(id);
-        });
-
+        card.innerHTML = `<img src="${src}" alt="${title}"><div class="card-overlay"><div class="card-title">${title}</div><button class="card-delete" data-id="${id}">✕</button></div>`;
+        card.querySelector('.card-delete').addEventListener('click', e => { e.stopPropagation(); deleteWork(id); });
         document.getElementById('gallery').appendChild(card);
         works.push({ id, src, title, tags });
         saveWorks();
@@ -341,15 +280,10 @@
       if (cards[idx]) {
         cards[idx].style.opacity = '0';
         cards[idx].style.transform = 'scale(0.8)';
-        setTimeout(() => {
-          cards[idx].remove();
-          works.splice(idx, 1);
-          saveWorks();
-        }, 300);
+        setTimeout(() => { cards[idx].remove(); works.splice(idx, 1); saveWorks(); }, 300);
       }
     }
 
-    // PERSISTENCE
     function saveWorks() {
       const data = works.map(w => ({ src: w.src, title: w.title, tags: w.tags }));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -365,15 +299,11 @@
       } catch (e) {}
     }
 
-    // GITHUB SYNC
     async function pushToGitHub() {
       const token = localStorage.getItem(GH_TOKEN_KEY);
       if (!token) return;
 
-      const manifest = {
-        version: Date.now(),
-        works: works.map(w => ({ src: w.src, title: w.title, tags: w.tags }))
-      };
+      const manifest = { version: Date.now(), works: works.map(w => ({ src: w.src, title: w.title, tags: w.tags })) };
 
       try {
         const shaResp = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/manifest.json?ref=main`, {
@@ -390,21 +320,14 @@
 
         const resp = await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/manifest.json`, {
           method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: 'application/vnd.github+json',
-            'Content-Type': 'application/json'
-          },
+          headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
           body: body
         });
 
-        if (resp.ok) {
-          toast('已同步到云端，展示页自动更新', 'success');
-        }
+        if (resp.ok) toast('已同步到云端，展示页自动更新', 'success');
       } catch (e) {}
     }
 
-    // TOAST
     function toast(msg, type = '') {
       const el = document.getElementById('toast');
       el.textContent = msg;
@@ -413,8 +336,11 @@
       el._timer = setTimeout(() => el.classList.remove('show'), 3000);
     }
 
-    // Start
-    init();
+    // Check auth on load
+    if (localStorage.getItem(AUTH_KEY)) {
+      document.getElementById('authScreen').classList.add('hidden');
+      init();
+    }
   </script>
 </body>
 </html>
