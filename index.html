@@ -36,46 +36,7 @@
       pointer-events: none; z-index: 0; opacity: 0.4;
     }
 
-    /* LOGIN MODAL - Hidden by default */
-    .login-modal {
-      position: fixed; inset: 0; z-index: 2000;
-      display: none; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
-    }
-    .login-modal.show { display: flex; }
-    .login-box {
-      background: rgba(20,18,15,0.9); border: 1px solid rgba(232,228,223,0.15);
-      border-radius: 16px; padding: 2rem; max-width: 320px; width: 90%;
-    }
-    .login-title {
-      font-family: 'Playfair Display', serif; font-size: 1.5rem;
-      font-weight: 700; margin-bottom: 1.5rem; text-align: center;
-    }
-    .login-input {
-      width: 100%; background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(232,228,223,0.12); border-radius: 8px;
-      padding: 0.75rem 1rem; color: var(--text-primary);
-      font-family: 'DM Mono', monospace; font-size: 0.85rem;
-      outline: none; margin-bottom: 1rem; transition: border-color 0.3s;
-    }
-    .login-input:focus { border-color: var(--accent); }
-    .login-input::placeholder { color: rgba(232,228,223,0.25); }
-    .login-btn {
-      width: 100%; background: var(--accent); color: #000;
-      border: none; border-radius: 8px; padding: 0.75rem;
-      font-family: 'DM Mono', monospace; font-size: 0.8rem;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      cursor: pointer; transition: opacity 0.2s; font-weight: 600;
-    }
-    .login-btn:hover { opacity: 0.8; }
-    .login-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .login-error {
-      color: #ff6b6b; font-size: 0.75rem; margin-top: 0.5rem;
-      text-align: center; display: none;
-    }
-    .login-error.show { display: block; }
-
-    /* HIDDEN LOGIN TRIGGER - Very subtle */
+    /* Hidden login trigger - very subtle */
     .login-trigger {
       position: fixed; bottom: 10px; right: 10px; z-index: 100;
       width: 20px; height: 20px; cursor: pointer;
@@ -86,7 +47,7 @@
     header { position: relative; z-index: 10; padding: 3rem 2rem 2rem; text-align: center; }
     .header-inner { max-width: 800px; margin: 0 auto; }
     .site-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
-    .site-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+    .site-title em { font-style: italic; font-weight: 400; color: var(--accent); transition: color var(--transition-speed) ease; }
     .site-subtitle { margin-top: 0.75rem; font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-secondary); }
     .color-bar { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1.2rem; }
     .color-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); transition: background 1.2s ease, box-shadow 1.2s ease; }
@@ -98,7 +59,7 @@
     .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: hsla(var(--hue),50%,50%,0.1); }
     .stats-bar { position: relative; z-index: 10; display: flex; align-items: center; justify-content: center; gap: 2.5rem; padding: 0 2rem 2rem; }
     .stat { text-align: center; }
-    .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); transition: color var(--transition-speed) ease; }
     .stat-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-secondary); margin-top: 0.2rem; }
     .stat-divider { width: 1px; height: 30px; background: rgba(232,228,223,0.15); }
     .gallery-wrapper { position: relative; z-index: 10; max-width: 1600px; margin: 0 auto; padding: 0 1.5rem 4rem; }
@@ -144,19 +105,8 @@
 </head>
 <body>
 
-  <!-- LOGIN MODAL - Hidden, triggered by clicking bottom-right corner -->
-  <div class="login-modal" id="loginModal">
-    <div class="login-box">
-      <div class="login-title">好明设计</div>
-      <input type="text" class="login-input" id="username" placeholder="账号" autocomplete="off">
-      <input type="password" class="login-input" id="password" placeholder="密码" autocomplete="off">
-      <button class="login-btn" id="loginBtn" onclick="handleLogin()">进入管理</button>
-      <div class="login-error" id="loginError"></div>
-    </div>
-  </div>
-
   <!-- Hidden login trigger (bottom-right corner) -->
-  <div class="login-trigger" id="loginTrigger" onclick="showLoginModal()" title=""></div>
+  <div class="login-trigger" id="loginTrigger" onclick="window.location.href='admin.html'" title=""></div>
 
   <header>
     <div class="header-inner">
@@ -208,52 +158,13 @@
   <footer>好明设计 &nbsp;·&nbsp; 影像 · 视觉 · 创意</footer>
 
   <script>
-    // LOGIN SYSTEM
-    const CORRECT_USERNAME = 'z1832698917';
-    const CORRECT_PASSWORD = '123A123a123B';
-    const AUTH_KEY = 'haoming_auth';
-
-    function showLoginModal() {
-      document.getElementById('loginModal').classList.add('show');
-      document.getElementById('username').focus();
-    }
-
-    function hideLoginModal() {
-      document.getElementById('loginModal').classList.remove('show');
-      document.getElementById('loginError').classList.remove('show');
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-    }
-
-    function handleLogin() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-      const errorEl = document.getElementById('loginError');
-
-      if (username === CORRECT_USERNAME && password === CORRECT_PASSWORD) {
-        localStorage.setItem(AUTH_KEY, 'true');
-        hideLoginModal();
-        window.location.href = 'admin.html';
-      } else {
-        errorEl.textContent = '账号或密码错误';
-        errorEl.classList.add('show');
-      }
-    }
-
-    // Allow Enter key to login
-    document.addEventListener('DOMContentLoaded', function() {
-      document.getElementById('password').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') handleLogin();
-      });
-    });
-
-    // GALLERY LOGIC
     var works = [];
     var currentFilter = 'all';
     var dominantHue = 220, accentSat = 20, accentLig = 8;
     var $ = function(id){return document.getElementById(id);};
     var masonry = $('masonry');
 
+    // Auto-load from GitHub on startup
     async function loadFromGitHub() {
       try {
         var resp = await fetch('https://api.github.com/repos/z1832698917/haoming-design/contents/manifest.json?ref=main', {
